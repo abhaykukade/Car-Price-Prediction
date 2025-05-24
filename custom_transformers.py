@@ -63,7 +63,6 @@ class YearTransformer(BaseEstimator, TransformerMixin):
         return self
     
     def transform(self, X):
-        X = X.copy()
-        X = X.squeeze().map(self.year_map)
-        X = pd.to_numeric(X, errors='coerce').fillna(self.mode_)
-        return X.to_frame()
+        cleaned = X.squeeze().map(self.year_map)
+        trf = pd.to_numeric(cleaned, errors='coerce').fillna(self.mode_)
+        return trf.values.reshape(-1, 1)
