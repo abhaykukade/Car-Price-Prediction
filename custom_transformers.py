@@ -26,7 +26,7 @@ class MultiLabelBinarizerTransformer(BaseEstimator, TransformerMixin):
             outputs.append(transformed)
         return np.hstack(outputs)
     
-    def get_feature_names_out(self):
+    def get_feature_names_out(self, columns=None):
         return [f'{col}_{cls}' for col, mlb in self.encoders.items() for cls in mlb.classes_]
 
 
