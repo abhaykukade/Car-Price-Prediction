@@ -1,6 +1,7 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import MultiLabelBinarizer
 import numpy as np
+import pandas as pd
 
 class MultiLabelBinarizerTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, columns=None):
@@ -47,4 +48,22 @@ class EngineSizeTransformer(BaseEstimator, TransformerMixin):
     
     def transform(self, X):
         return X.squeeze().map(self.engine_map).fillna(0).values.reshape(-1, 1)
-        
+
+
+class YearTransformer(BaseEstimator, TransformerMixin):
+    def __init__(self):
+        self.year_map = {
+            'Older than 1970': 1970
+        }
+
+    def fit(self, X, y=None):
+        cleaned = X.squeeze().map(self.year_map)
+        num_years = pd.to_numeric(cleaned, errors='coerce')
+        self.mode_ = num_years.mode().iloc[0] if not num_years.mode().empty else 1970
+        return self
+    
+    def transform(self, X):
+        X = X.copy()
+        X = X.squeeze().map(self.year_map)
+        X = pd.to_numeric(X, errors='coerce').fillna(self.mode_)
+        return X.to_frame()
