@@ -112,3 +112,40 @@ class KilometersTransformer(BaseEstimator, TransformerMixin):
     def transform(self, X):
         return X.squeeze().map(self.km_map).fillna(self.mode_).values.reshape(-1, 1)
     
+
+class BatteryCapacityTransformer(BaseEstimator, TransformerMixin):
+    def __init__(self):
+        self.battery_cap_map = {
+            'Less than 50 kWh': 30, 
+            '50 - 69 kWh': 60, 
+            '70 - 89 kWh': 80, 
+            '90 - 99 kWh': 95, 
+            'More than 100 kWh': 120
+        }
+
+    def fit(self, X, y=None):
+        self.mode_ = X.squeeze().map(self.battery_cap_map).mode()[0]
+        return self
+    
+    def transform(self, X):
+        return X.squeeze().map(self.battery_cap_map).fillna(self.mode_).values.reshape(-1, 1)
+    
+
+class BatteryRangeTransformer(BaseEstimator, TransformerMixin):
+    def __init__(self):
+        self.battery_range_map = {
+            '400 - 499 km': 450, 
+            '300 - 399 km': 350, 
+            'More than 500 km': 550, 
+            '200 - 299 km': 250, 
+            '100 - 199 km': 150, 
+            'Less than 100 km': 50
+        }
+
+    def fit(self, X, y=None):
+        self.mode_ = X.squeeze().map(self.battery_range_map).mode()[0]
+        return self
+    
+    def transform(self, X):
+        return X.squeeze().map(self.battery_range_map).fillna(self.mode_).values.reshape(-1, 1)
+    
