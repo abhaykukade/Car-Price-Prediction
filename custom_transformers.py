@@ -149,3 +149,17 @@ class BatteryRangeTransformer(BaseEstimator, TransformerMixin):
     def transform(self, X):
         return X.squeeze().map(self.battery_range_map).fillna(self.mode_).values.reshape(-1, 1)
     
+
+class LuxuryCarFlagger(BaseEstimator, TransformerMixin):
+    def __init__(self, luxury_set=None):
+        self.luxury_set = luxury_set or set()
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        return X.apply(lambda row: int((row['car_make'], row['model']) in self.luxury_set), axis=1).to_frame(name='is_luxury')
+    
+    def get_feature_names_out(self, input_features=None):
+        return ['is_luxury']
+    
